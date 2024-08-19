@@ -104,6 +104,7 @@ usertrapret(void)
 
   // set up trapframe values that uservec will need when
   // the process next traps into the kernel.
+  // kernel page table, next time trap to
   p->trapframe->kernel_satp = r_satp();         // kernel page table
   p->trapframe->kernel_sp = p->kstack + PGSIZE; // process's kernel stack
   p->trapframe->kernel_trap = (uint64)usertrap;
@@ -122,6 +123,7 @@ usertrapret(void)
   w_sepc(p->trapframe->epc);
 
   // tell trampoline.S the user page table to switch to.
+  // user page table, this time return trap to
   uint64 satp = MAKE_SATP(p->pagetable);
 
   // jump to userret in trampoline.S at the top of memory, which 
