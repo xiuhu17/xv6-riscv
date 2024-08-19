@@ -135,6 +135,7 @@ usertrapret(void)
 
 // interrupts and exceptions from kernel code go here via kernelvec,
 // on whatever the current kernel stack is.
+// syscall --> kernel --> interrupt --> kernel(same kernel stack as first time)
 void 
 kerneltrap()
 {
