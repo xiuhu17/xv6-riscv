@@ -532,6 +532,9 @@ forkret(void)
 
 // Atomically release lock and sleep on chan.
 // Reacquires lock when awakened.
+// 1: use sched() to realize sleeping through marking the the process state
+// 2: leave the process at sched(), wakeup from sched()
+// 3: pass the spinlock *lk to &p->lock for sleep; vice versa
 void
 sleep(void *chan, struct spinlock *lk)
 {
