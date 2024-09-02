@@ -23,7 +23,7 @@ acquiresleep(struct sleeplock *lk)
 {
   acquire(&lk->lk);
   while (lk->locked) {
-    sleep(lk, &lk->lk); // release &lk->lk; acquire &p->lock; sched(); release &p->lock; acquire &lk->lk
+    sleep(lk, &lk->lk); // release &lk->lk; acquire &p->lock; mark sleeping, call sched(); release &p->lock; acquire &lk->lk
   }
   lk->locked = 1;
   lk->pid = myproc()->pid;
@@ -36,7 +36,7 @@ releasesleep(struct sleeplock *lk)
   acquire(&lk->lk);
   lk->locked = 0;
   lk->pid = 0;
-  wakeup(lk);
+  wakeup(lk); // mark all sleeping process, wait on sleeplock *lk as runnable
   release(&lk->lk);
 }
 
