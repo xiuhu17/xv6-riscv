@@ -235,12 +235,14 @@ uvmalloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz, int xperm)
   for(a = oldsz; a < newsz; a += PGSIZE){
     mem = kalloc();
     if(mem == 0){
+      // undo all the mapping so far: uvmdealloc() -> uvmunmap() {*pte = 0; kfree()}
       uvmdealloc(pagetable, a, oldsz);
       return 0;
     }
     memset(mem, 0, PGSIZE);
     if(mappages(pagetable, a, PGSIZE, (uint64)mem, PTE_R|PTE_U|xperm) != 0){
       kfree(mem);
+      // undo all the mapping so far: uvmdealloc() -> uvmunmap() {*pte = 0; kfree()}
       uvmdealloc(pagetable, a, oldsz);
       return 0;
     }
