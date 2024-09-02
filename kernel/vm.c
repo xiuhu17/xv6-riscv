@@ -319,19 +319,19 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
       panic("uvmcopy: page not present");
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto err;
+    if((mem = kalloc()) == 0) {
+      uvmunmap(new, 0, i / PGSIZE, 1);
+      return -1;
+    }
     memmove(mem, (char*)pa, PGSIZE);
     if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
       kfree(mem);
-      goto err;
+      uvmunmap(new, 0, i / PGSIZE, 1);
+      return -1;
     }
   }
-  return 0;
-
- err:
-  uvmunmap(new, 0, i / PGSIZE, 1);
-  return -1;
+  
+  return 0; 
 }
 
 // mark a PTE invalid for user access.
