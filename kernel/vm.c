@@ -104,6 +104,11 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
 
 // Recursively free page-table pages.
 // All leaf mappings must already have been removed.
+      // pte_t* pte = &pagetable[i];
+      // uint64 child = PTE2PA(*pte);
+      // *pte = 0; // zero entry
+      // kfree((void*)pagetable); // free the allocation
+      // recursive(child);
 void
 freewalk(pagetable_t pagetable)
 {
@@ -187,6 +192,10 @@ mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
 // Remove npages of mappings starting from va. va must be
 // page-aligned. The mappings must exist.
 // Optionally free the physical memory.
+      // pte_t* pte = &pagetable[i];
+      // uint64 child = PTE2PA(*pte);
+      // *pte = 0; // zero entry
+      // kfree((void*)child); // free the allocation
 void
 uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
 {
