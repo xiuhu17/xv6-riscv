@@ -6,6 +6,10 @@
 #include "proc.h"
 #include "defs.h"
 
+// exit(): ZOMBIE; sched();
+// yield(): RUNNABLE; sched();
+// sleep(): SLEEPING; sched();
+
 struct cpu cpus[NCPU];
 
 struct proc proc[NPROC];
