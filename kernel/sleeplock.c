@@ -18,26 +18,39 @@ initsleeplock(struct sleeplock *lk, char *name)
   lk->pid = 0;
 }
 
+/*
+  similar to
+    pthread_mutex_lock(); // lock mutex
+    while(!cond) // !cond
+      pthread_cond_wait(); // unlock mutex; lock mutex
+    pthread_mutex_unlock(); // unlock mutex
+  */
 void
 acquiresleep(struct sleeplock *lk)
 {
-  acquire(&lk->lk);
-  while (lk->locked) {
-    sleep(lk, &lk->lk); // release &lk->lk; acquire &p->lock; mark sleeping, call sched(); release &p->lock; acquire &lk->lk
+  acquire(&lk->lk);  // lock spin
+  while (lk->locked) {  // !cond
+    sleep(lk, &lk->lk); // release &lk->lk; acquire &p->lock; mark sleeping, call sched(); release &p->lock; acquire &lk->lk // unlock spin; lock spin
   }
   lk->locked = 1;
   lk->pid = myproc()->pid;
-  release(&lk->lk);
+  release(&lk->lk); // unlock spin
 }
 
+/*
+  similar to
+    pthread_mutex_lock(); // lock mutex
+    pthread_cond_wakeup();
+    pthread_mutex_unlock(); // unlock mutex
+  */
 void
 releasesleep(struct sleeplock *lk)
 {
-  acquire(&lk->lk);
+  acquire(&lk->lk); // lock spin
   lk->locked = 0;
   lk->pid = 0;
-  wakeup(lk); // mark all sleeping process, wait on sleeplock *lk as runnable
-  release(&lk->lk);
+  wakeup(lk); // mark all sleeping process, wait on sleeplock *lk as runnable // notify
+  release(&lk->lk); // unlock spin
 }
 
 int
