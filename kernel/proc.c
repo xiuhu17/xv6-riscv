@@ -137,6 +137,8 @@ found:
   }
 
   // An empty user page table.
+  
+  // trampoline, trapframe under user satp
   p->pagetable = proc_pagetable(p);
   if(p->pagetable == 0){
     freeproc(p);
