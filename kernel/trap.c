@@ -106,7 +106,7 @@ usertrapret(void)
   // the process next traps into the kernel.
   // kernel page table, next time trap to
   p->trapframe->kernel_satp = r_satp();         // kernel page table
-  p->trapframe->kernel_sp = p->kstack + PGSIZE; // process's kernel stack
+  p->trapframe->kernel_sp = p->kstack + PGSIZE; // process's kernel stack // allocproc(void) { p->context.ra = (uint64)forkret; p->context.sp = p->kstack + PGSIZE; }
   p->trapframe->kernel_trap = (uint64)usertrap;
   p->trapframe->kernel_hartid = r_tp();         // hartid for cpuid()
 
