@@ -297,8 +297,8 @@ uvmdealloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
   return newsz;
 }
 
-// Free user memory pages,
-// then free page-table pages.
+// Free user memory pages: leaf pages; uvmunmap; *pte = 0; kfree();
+// then free page-table pages: freewalk; *pte = 0; kfree();
 void
 uvmfree(pagetable_t pagetable, uint64 sz)
 {
